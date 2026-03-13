@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+{# create_listing.html — Formulario de criacao de anuncio (requer login). #}
+
+{% block body %}
+    <h2 class="page-title">Criar Anuncio</h2>
+
+    <div class="form-card">
+        {# Mensagem de erro de validacao #}
+        {% if message %}
+            <div class="alert-neon error">{{ message }}</div>
+        {% endif %}
+
+        <form action="{% url 'create' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Titulo</label>
+                <input type="text" name="title" id="title" class="input-neon" placeholder="O que voce esta vendendo?" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Descricao</label>
+                <textarea name="description" id="description" class="input-neon" rows="4" placeholder="Descreva seu item..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="starting_bid">Lance Inicial (R$)</label>
+                <input type="number" step="0.01" min="0.01" name="starting_bid" id="starting_bid" class="input-neon" placeholder="0,00" required>
+            </div>
+            <div class="form-group">
+                <label for="image_url">URL da Imagem (opcional)</label>
+                <input type="url" name="image_url" id="image_url" class="input-neon" placeholder="https://exemplo.com/imagem.jpg">
+            </div>
+            <div class="form-group">
+                <label for="category">Categoria (opcional)</label>
+                <select name="category" id="category" class="input-neon">
+                    <option value="">-- Selecione --</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-neon" style="width:100%;padding:0.8rem;">Criar Anuncio</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "auctions/layout.html" %}
+{# listing.html — Detalhe do anuncio: imagem, lances, favoritos, comentarios. #}
+
+{% block body %}
+    {# ===== SECAO PRINCIPAL: imagem + informacoes lado a lado ===== #}
+    <div class="listing-detail">
+        {# Imagem do anuncio #}
+        <div class="listing-detail-image">
+            {% if listing.image_url %}
+                <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+            {% else %}
+                <div style="height:300px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-family:'Orbitron',monospace;letter-spacing:3px;font-size:0.75rem;">SEM IMAGEM</div>
+            {% endif %}
+        </div>
+
+        {# Painel de informacoes do anuncio #}
+        <div class="listing-detail-info">
+            {# Titulo e badge de status (Ativo/Encerrado) #}
+            <div>
+                <h2 class="detail-title">{{ listing.title }}</h2>
+                {% if listing.active %}
+                    <span class="status-badge active">Ativo</span>
+                {% else %}
+                    <span class="status-badge closed">Encerrado</span>
+                {% endif %}
+            </div>
+
+            {# Preco atual (maior lance ou lance inicial) #}
+            <div class="detail-price">R$ {{ listing.current_price }}</div>
+
+            {# Contagem de lances e indicacao se e o maior #}
+            <p class="bid-info">
+                {{ bid_count }} lance{{ bid_count|pluralize:"s" }} ate agora.
+                {% if is_top_bidder %}
+                    <span class="your-bid">Seu lance e o atual!</span>
+                {% endif %}
+            </p>
+
+            {# Mensagem de vitoria (so aparece em leiloes encerrados) #}
+            {% if not listing.active and is_winner %}
+                <div class="alert-neon success">Parabens! Voce venceu este leilao.</div>
+            {% endif %}
+
+            {# Mensagem de erro (ex: lance invalido) #}
+            {% if message %}
+                <div class="alert-neon error">{{ message }}</div>
+            {% endif %}
+
+            {# Botao de favoritos — adicionar ou remover #}
+            {% if user.is_authenticated %}
+                <div class="watchlist-btn">
+                    <form action="{% url 'toggle_watchlist' listing.id %}" method="post">
+                        {% csrf_token %}
+                        {% if is_watching %}
+                            <button type="submit" class="btn-danger-neon btn-sm">Remover dos Favoritos</button>
+                        {% else %}
+                            <button type="submit" class="btn-neon-outline btn-sm">Adicionar aos Favoritos</button>
+                        {% endif %}
+                    </form>
+                </div>
+            {% endif %}
+
+            {# Formulario de lance — so aparece se logado e leilao ativo #}
+            {% if user.is_authenticated and listing.active %}
+                <form action="{% url 'place_bid' listing.id %}" method="post" style="display:flex;gap:0.5rem;align-items:flex-start;margin-top:0.25rem;">
+                    {% csrf_token %}
+                    <input type="number" step="0.01" name="bid" class="input-neon" placeholder="Seu lance..." style="max-width:200px;">
+                    <button type="submit" class="btn-neon">Dar Lance</button>
+                </form>
+            {% endif %}
+
+            {# Botao de encerrar — so aparece para o criador do anuncio #}
+            {% if user.is_authenticated and is_creator and listing.active %}
+                <form action="{% url 'close_auction' listing.id %}" method="post" style="margin-top:0.25rem;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger-neon">Encerrar Leilao</button>
+                </form>
+            {% endif %}
+
+            {# Descricao completa do produto #}
+            <p class="detail-description">{{ listing.description }}</p>
+
+            {# Metadados: criador, categoria, data #}
+            <ul class="detail-meta">
+                <li><strong>Anunciado por:</strong> {{ listing.creator }}</li>
+                {% if listing.category %}
+                    <li><strong>Categoria:</strong> {{ listing.category }}</li>
+                {% endif %}
+                <li><strong>Criado em:</strong> {{ listing.created_at|date:"d \d\e M \d\e Y, H:i" }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    {# ===== SECAO DE COMENTARIOS ===== #}
+    <div class="comments-section">
+        <h3 class="section-title">Comentarios</h3>
+
+        {# Formulario para adicionar comentario — so para usuarios logados #}
+        {% if user.is_authenticated %}
+            <form action="{% url 'add_comment' listing.id %}" method="post" style="margin-bottom:1.5rem;">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea name="comment" class="input-neon" rows="3" placeholder="Escreva um comentario..."></textarea>
+                </div>
+                <button type="submit" class="btn-neon">Comentar</button>
+            </form>
+        {% endif %}
+
+        {# Lista de comentarios com avatar, nome, data e texto #}
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="comment-item">
+                    <div class="comment-header">
+                        {# Avatar com a inicial do nome do usuario #}
+                        <div class="comment-avatar">{{ comment.commenter.username|first|upper }}</div>
+                        <div>
+                            <span class="comment-author">{{ comment.commenter }}</span>
+                            <span class="comment-date">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                        </div>
+                    </div>
+                    <p class="comment-text">{{ comment.text }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state" style="padding:2rem;">
+                <p>Nenhum comentario ainda. Seja o primeiro!</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

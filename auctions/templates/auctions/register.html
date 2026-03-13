@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+{# register.html — Formulario de cadastro com validacao de senhas. #}
+
+{% block body %}
+    <div class="auth-container">
+        <h2 class="page-title">Cadastrar</h2>
+
+        <div class="form-card">
+            {% if message %}
+                <div class="alert-neon error">{{ message }}</div>
+            {% endif %}
+
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input class="input-neon" autofocus type="text" name="username" id="username" placeholder="Escolha um usuario">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input class="input-neon" type="email" name="email" id="email" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input class="input-neon" type="password" name="password" id="password" placeholder="Crie uma senha">
+                </div>
+                <div class="form-group">
+                    <label for="confirmation">Confirmar Senha</label>
+                    <input class="input-neon" type="password" name="confirmation" id="confirmation" placeholder="Confirme sua senha">
+                </div>
+                <button type="submit" class="btn-neon" style="width:100%;padding:0.8rem;">Cadastrar</button>
+            </form>
+        </div>
+
+        <div class="auth-link">
+            Ja tem uma conta? <a href="{% url 'login' %}">Entre aqui.</a>
+        </div>
+    </div>
+{% endblock %}

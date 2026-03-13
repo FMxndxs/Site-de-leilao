@@ -1,0 +1,87 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <title>{% block title %}Leiloes{% endblock %}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        {# ===== BARRA DE NAVEGACAO ===== #}
+        <nav class="navbar">
+            <div class="navbar-inner">
+                {# Logo/marca do site #}
+                <a href="{% url 'index' %}" class="brand">Leiloes</a>
+
+                <div class="nav-right">
+                    {# Status de autenticacao do usuario #}
+                    {% if user.is_authenticated %}
+                        <span class="user-status">Logado como <strong>{{ user.username }}</strong></span>
+                    {% endif %}
+
+                    {# Links de navegacao — mudam conforme usuario logado ou nao #}
+                    <ul class="nav-links">
+                        <li><a href="{% url 'index' %}">Anuncios</a></li>
+                        <li><a href="{% url 'categories' %}">Categorias</a></li>
+                        {% if user.is_authenticated %}
+                            <li>
+                                <a href="{% url 'watchlist' %}">
+                                    Favoritos
+                                    {# Badge com contagem de favoritos #}
+                                    {% if user.watchlist.count > 0 %}
+                                        <span class="badge-count">{{ user.watchlist.count }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li><a href="{% url 'create' %}">+ Criar</a></li>
+                            <li><a href="{% url 'logout' %}">Sair</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Entrar</a></li>
+                            <li><a href="{% url 'register' %}">Cadastrar</a></li>
+                        {% endif %}
+                    </ul>
+
+                    {# Botao para alternar entre tema claro e escuro #}
+                    <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+                        <span id="themeIcon">&#9790;</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        {# ===== CONTEUDO PRINCIPAL — preenchido pelos templates filhos ===== #}
+        <div class="main-content">
+            {% block body %}
+            {% endblock %}
+        </div>
+
+        {# ===== SCRIPT DE ALTERNANCIA DE TEMA (claro/escuro) ===== #}
+        {# Salva a preferencia no localStorage do navegador #}
+        <script>
+            (function() {
+                var toggle = document.getElementById('themeToggle');
+                var icon = document.getElementById('themeIcon');
+                var saved = localStorage.getItem('theme');
+
+                function applyTheme(theme) {
+                    document.documentElement.setAttribute('data-theme', theme);
+                    // Sol para escuro (indica que pode mudar para claro)
+                    // Lua para claro (indica que pode mudar para escuro)
+                    icon.textContent = theme === 'dark' ? '\u2600' : '\u263E';
+                    localStorage.setItem('theme', theme);
+                }
+
+                // Aplica tema salvo ou padrao (claro)
+                applyTheme(saved || 'light');
+
+                toggle.addEventListener('click', function() {
+                    var current = document.documentElement.getAttribute('data-theme');
+                    applyTheme(current === 'dark' ? 'light' : 'dark');
+                });
+            })();
+        </script>
+    </body>
+</html>

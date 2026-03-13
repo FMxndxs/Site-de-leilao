@@ -1,0 +1,44 @@
+{% extends "auctions/layout.html" %}
+{# index.html — Listagem de anuncios (ativos, favoritos ou por categoria).
+   O titulo vem da variavel {{ heading }} passada pela view. #}
+
+{% block body %}
+    <h2 class="page-title">{{ heading }}</h2>
+
+    {% if listings %}
+        {# Grid responsivo de cards de anuncios #}
+        <div class="listings-grid">
+            {% for listing in listings %}
+                <div class="listing-card">
+                    {# Area da imagem com tag de categoria sobreposta #}
+                    <div class="listing-card-image {% if not listing.image_url %}no-image{% endif %}">
+                        {% if listing.image_url %}
+                            <a href="{% url 'listing' listing.id %}">
+                                <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                            </a>
+                        {% endif %}
+                        {% if listing.category %}
+                            <span class="category-tag">{{ listing.category.name }}</span>
+                        {% endif %}
+                    </div>
+
+                    {# Informacoes do anuncio: titulo, descricao, preco, data #}
+                    <div class="listing-card-body">
+                        <h3><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h3>
+                        <p class="description">{{ listing.description|truncatewords:20 }}</p>
+                        <div class="listing-card-footer">
+                            <span class="card-price">R$ {{ listing.current_price }}</span>
+                            <span class="card-date">{{ listing.created_at|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {# Estado vazio quando nao ha anuncios #}
+        <div class="empty-state">
+            <div class="empty-icon">&#128269;</div>
+            <p>Nenhum anuncio encontrado.</p>
+        </div>
+    {% endif %}
+{% endblock %}

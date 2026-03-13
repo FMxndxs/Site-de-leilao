@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+{# categories.html — Grid de categorias com icones emoji. #}
+
+{% block body %}
+    <h2 class="page-title">Categorias</h2>
+
+    {% if categories %}
+        <div class="categories-grid">
+            {% for category in categories %}
+                <div class="category-card">
+                    {# Icone emoji baseado no nome da categoria #}
+                    <span class="category-icon">
+                        {% if category.name == "Moda" %}&#128087;{% elif category.name == "Brinquedos" %}&#127922;{% elif category.name == "Eletronicos" %}&#128268;{% elif category.name == "Casa" %}&#127968;{% elif category.name == "Esportes" %}&#9917;{% elif category.name == "Livros" %}&#128218;{% else %}&#128230;{% endif %}
+                    </span>
+                    <a href="{% url 'category_listings' category.id %}">{{ category.name }}</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Nenhuma categoria disponivel.</p>
+        </div>
+    {% endif %}
+{% endblock %}
