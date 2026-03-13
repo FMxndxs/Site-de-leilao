@@ -40,9 +40,6 @@ Na aba **Environment**, adicione:
 | `DATABASE_URL` | Cole a Internal Database URL do PostgreSQL que você criou |
 | `SECRET_KEY` | Gere uma chave aleatória (ex: `python -c "import secrets; print(secrets.token_hex(32))"`) |
 | `DEBUG` | `False` |
-| `DJANGO_SUPERUSER_USERNAME` | admin (ou outro usuário para o admin) |
-| `DJANGO_SUPERUSER_EMAIL` | admin@exemplo.com |
-| `DJANGO_SUPERUSER_PASSWORD` | Senha segura para o admin |
 
 ### 6. Start Command (**obrigatório** – sem isso o site não carrega!)
 O app **precisa** escutar na porta que o Render define. No Render Dashboard → seu serviço → **Settings** → **Start Command**, use **exatamente** uma destas opções:
@@ -62,14 +59,22 @@ bash start.sh
 - Aguarde o build terminar (pode levar 2–5 minutos)
 - Seu site estará em `https://seu-app.onrender.com`
 
-### 8. Criar superusuário (admin)
-**Plano gratuito (sem Shell):** Com as variáveis `DJANGO_SUPERUSER_*` configuradas no passo 5, o superusuário é criado automaticamente no build. Após o deploy, acesse `https://seu-app.onrender.com/admin/` e faça login.
+### 8. Após o primeiro deploy
 
-**Plano pago (com Shell):** Vá em **Shell** no seu Web Service e execute:
+**Superusuário (admin) – plano gratuito sem Shell:**  
+Vá em **Environment** → **Add Environment Variable** e adicione:
 
-```bash
-python manage.py createsuperuser
-```
+| Key | Value |
+|-----|-------|
+| `DJANGO_SUPERUSER_USERNAME` | admin (ou outro usuário) |
+| `DJANGO_SUPERUSER_EMAIL` | admin@exemplo.com |
+| `DJANGO_SUPERUSER_PASSWORD` | Senha segura para o admin |
+
+Depois, clique em **Manual Deploy** → **Deploy latest commit**. O superusuário será criado automaticamente no próximo build. Acesse `https://seu-app.onrender.com/admin/` e faça login.
+
+**Plano pago (com Shell):** Vá em **Shell** e execute `python manage.py createsuperuser`.
+
+**Categorias:** As categorias iniciais (Eletrônicos, Moda, Esportes, etc.) são criadas automaticamente pela migração. Para criar novas categorias, use o **Admin** em `/admin/` → **Categorias** → **Adicionar**.
 
 ---
 
