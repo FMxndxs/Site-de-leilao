@@ -1,0 +1,28 @@
+services:
+  - type: web
+    plan: free
+    name: site-de-leilao
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: commerce-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+
+databases:
+  - name: commerce-db
+    plan: free
+    databaseName: commerce
+    user: commerce

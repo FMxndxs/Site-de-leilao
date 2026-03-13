@@ -30,7 +30,7 @@
 | **Root Directory** | (deixe vazio) |
 | **Runtime** | Python 3 |
 | **Build Command** | `./build.sh` ou `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate` |
-| **Start Command** | `gunicorn commerce.wsgi:application` |
+| **Start Command** | `gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT` |
 
 ### 5. Variáveis de Ambiente
 Na aba **Environment**, adicione:
@@ -44,12 +44,25 @@ Na aba **Environment**, adicione:
 | `DJANGO_SUPERUSER_EMAIL` | admin@exemplo.com |
 | `DJANGO_SUPERUSER_PASSWORD` | Senha segura para o admin |
 
-### 6. Deploy
+### 6. Start Command (**obrigatório** – sem isso o site não carrega!)
+O app **precisa** escutar na porta que o Render define. No Render Dashboard → seu serviço → **Settings** → **Start Command**, use **exatamente** uma destas opções:
+
+```
+gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT
+```
+
+**OU** (alternativa via script):
+
+```
+bash start.sh
+```
+
+### 7. Deploy
 - Clique em **Create Web Service**
 - Aguarde o build terminar (pode levar 2–5 minutos)
 - Seu site estará em `https://seu-app.onrender.com`
 
-### 7. Criar superusuário (admin)
+### 8. Criar superusuário (admin)
 **Plano gratuito (sem Shell):** Com as variáveis `DJANGO_SUPERUSER_*` configuradas no passo 5, o superusuário é criado automaticamente no build. Após o deploy, acesse `https://seu-app.onrender.com/admin/` e faça login.
 
 **Plano pago (com Shell):** Vá em **Shell** no seu Web Service e execute:
