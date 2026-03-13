@@ -71,9 +71,17 @@
 
             {# Botao de encerrar — so aparece para o criador do anuncio #}
             {% if user.is_authenticated and is_creator and listing.active %}
-                <form action="{% url 'close_auction' listing.id %}" method="post" style="margin-top:0.25rem;">
+                <form action="{% url 'close_auction' listing.id %}" method="post" style="margin-top:0.25rem;display:inline-block;margin-right:0.5rem;">
                     {% csrf_token %}
                     <button type="submit" class="btn-danger-neon">Encerrar Leilao</button>
+                </form>
+            {% endif %}
+
+            {# Botao de deletar — aparece para o criador ou para administradores #}
+            {% if user.is_authenticated and is_creator or user.is_staff or user.is_superuser %}
+                <form action="{% url 'delete_listing' listing.id %}" method="post" style="margin-top:0.25rem;display:inline-block;" onsubmit="return confirm('Tem certeza que deseja excluir este anuncio? Esta acao nao pode ser desfeita.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger-neon">Deletar Anuncio</button>
                 </form>
             {% endif %}
 

@@ -312,6 +312,20 @@ def close_auction(request, listing_id):
 
 
 @login_required
+def delete_listing(request, listing_id):
+    """
+    Deleta um anuncio. Somente o criador ou um administrador (staff/superuser) pode deletar.
+    Redireciona para a pagina inicial apos excluir.
+    """
+    listing = get_object_or_404(Listing, pk=listing_id)
+    is_creator = request.user == listing.creator
+    is_admin = request.user.is_staff or request.user.is_superuser
+    if is_creator or is_admin:
+        listing.delete()
+    return HttpResponseRedirect(reverse("index"))
+
+
+@login_required
 def add_comment(request, listing_id):
     """
     Adiciona um comentario ao anuncio.

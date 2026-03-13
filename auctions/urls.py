@@ -28,6 +28,7 @@ urlpatterns = [
     path("listings/<int:listing_id>/watchlist", views.toggle_watchlist, name="toggle_watchlist"),
     path("listings/<int:listing_id>/bid", views.place_bid, name="place_bid"),
     path("listings/<int:listing_id>/close", views.close_auction, name="close_auction"),
+    path("listings/<int:listing_id>/delete", views.delete_listing, name="delete_listing"),
     path("listings/<int:listing_id>/comment", views.add_comment, name="add_comment"),
 
     # Pagina de favoritos do usuario (requer login)
