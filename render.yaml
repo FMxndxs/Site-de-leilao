@@ -4,7 +4,7 @@ services:
     name: site-de-leilao
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "python -m gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT"
+    startCommand: "python -m gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --worker-tmp-dir /dev/shm --timeout 120"
     envVars:
       - key: DATABASE_URL
         fromDatabase:

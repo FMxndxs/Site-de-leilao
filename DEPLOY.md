@@ -30,7 +30,7 @@
 | **Root Directory** | (deixe vazio) |
 | **Runtime** | Python 3 |
 | **Build Command** | `./build.sh` ou `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate` |
-| **Start Command** | `python -m gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT` |
+| **Start Command** | `python -m gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --worker-tmp-dir /dev/shm --timeout 120` |
 
 ### 5. Variáveis de Ambiente
 Na aba **Environment**, adicione:
@@ -45,7 +45,7 @@ Na aba **Environment**, adicione:
 O app **precisa** escutar na porta que o Render define. No Render Dashboard → seu serviço → **Settings** → **Start Command**, use **exatamente** uma destas opções:
 
 ```
-python -m gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT
+python -m gunicorn commerce.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --worker-tmp-dir /dev/shm --timeout 120
 ```
 
 **OU** (alternativa via script):
