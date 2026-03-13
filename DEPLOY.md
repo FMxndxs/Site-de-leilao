@@ -40,6 +40,9 @@ Na aba **Environment**, adicione:
 | `DATABASE_URL` | Cole a Internal Database URL do PostgreSQL que você criou |
 | `SECRET_KEY` | Gere uma chave aleatória (ex: `python -c "import secrets; print(secrets.token_hex(32))"`) |
 | `DEBUG` | `False` |
+| `DJANGO_SUPERUSER_USERNAME` | admin (ou outro usuário para o admin) |
+| `DJANGO_SUPERUSER_EMAIL` | admin@exemplo.com |
+| `DJANGO_SUPERUSER_PASSWORD` | Senha segura para o admin |
 
 ### 6. Deploy
 - Clique em **Create Web Service**
@@ -47,13 +50,13 @@ Na aba **Environment**, adicione:
 - Seu site estará em `https://seu-app.onrender.com`
 
 ### 7. Criar superusuário (admin)
-Após o primeiro deploy, vá em **Shell** no seu Web Service no Render e execute:
+**Plano gratuito (sem Shell):** Com as variáveis `DJANGO_SUPERUSER_*` configuradas no passo 5, o superusuário é criado automaticamente no build. Após o deploy, acesse `https://seu-app.onrender.com/admin/` e faça login.
+
+**Plano pago (com Shell):** Vá em **Shell** no seu Web Service e execute:
 
 ```bash
 python manage.py createsuperuser
 ```
-
-Informe usuário, e-mail e senha. Depois acesse `https://seu-app.onrender.com/admin/` para fazer login.
 
 ---
 
